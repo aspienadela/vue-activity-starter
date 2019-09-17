@@ -21,10 +21,21 @@ export const ActivitiesAPI = () => {
 	}
 }
 
+export const generateUid = () =>  Math.floor(new Date() * Math.random())
+
+export const createNewActivityAPI = newActivity => {
+	newActivity.id = generateUid()
+	newActivity.progress = 0
+	newActivity.createdAt = new Date()
+	newActivity.updatedAt = new Date()
+
+	return newActivity
+}
+
 export const CategoriesAPI = () => {
   return {
-    '1546969049': {text: 'books'},
-    '1546969225': {text: 'movies'}
+    '1546969049': {id: '1546969049', text: 'books'},
+    '1546969225': {id: '1546969225', text: 'movies'}
   }
 }
 

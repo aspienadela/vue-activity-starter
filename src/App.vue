@@ -30,62 +30,10 @@
     <section class="container">
       <div class="columns">
         <div class="column is-3">
-          <a
-            v-if="!isFormDisplayed"
-            class="button is-primary is-block is-alt is-large"
-            href="#"
-            @click="toggleFormDisplay"
-          >New Activity</a>
-          <div
-            v-if="isFormDisplayed"
-            class="create-form"
-          >
-            <h2>Create Activity</h2>
-            <form>
-              <div class="field">
-                <label class="label">Title</label>
-                <div class="control">
-                  <input
-                    v-model="newActivity.title"
-                    class="input"
-                    type="text"
-                    placeholder="Read a Book"
-                  >
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">Notes</label>
-                <div class="control">
-                  <textarea
-                    v-model="newActivity.notes"
-                    class="textarea"
-                    placeholder="Write some notes here"
-                  />
-                </div>
-              </div>
-              <div class="field is-grouped">
-                <div class="control">
-                  <button
-                    type="button"
-                    class="button is-link"
-                    :disabled="!isFormValid"
-                    @click="createActivity"
-                  >
-                    Create Activity
-                  </button>
-                </div>
-                <div class="control">
-                  <button
-                    type="button"
-                    class="button is-text"
-                    @click="toggleFormDisplay"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
+          <ActivityCreate 
+            :categories=categories 
+            @activityCreated="createActivity" 
+          />
         </div>
         <div class="column is-9">
           <div class="box content">
@@ -105,37 +53,26 @@
 
 <script>
 import ActivityItem from './components/ActivityItem'
+import ActivityCreate from './components/ActivityCreate'
 import { ActivitiesAPI, UserAPI, CategoriesAPI } from './api'
 export default {
   components: {
-    ActivityItem
+    ActivityItem, ActivityCreate
   },
   data() {
     return {
-      isFormDisplayed: false,
       creator: 'Pjay Nadela',
-      appName: 'Activity Planner',
-      newActivity: {
-        id: Math.random().toString(10).substring(8),
-        title: '',
-        notes: ''
-      },
+      appName: 'Activity Planner', 
       items: {1: {name: 'Pjay'}, 2: {name: 'Nadela'}},
       user: {
         name: 'Pjay Nadela',
         id: '-Aj34jknvncx98812',
       },
       activities: {},
-      categories: {
-        '1546969049': {text: 'books'},
-        '1546969225': {text: 'movies'}
-      }
+      categories: {}
     }
   },
   computed: {
-    isFormValid () {
-      return this.newActivity.title && this.newActivity.notes
-    },
     fullAppName(){
       return `${this.appName} by ${this.creator}`
     },
@@ -145,21 +82,14 @@ export default {
   },  
   created() {
     this.activities = ActivitiesAPI()
-    this.user = UserAPI()
     this.categories = CategoriesAPI()
+    this.user = UserAPI()
   },
   methods: {
-    toggleFormDisplay () {
-      this.isFormDisplayed = !this.isFormDisplayed
-    },
-    createActivity() {
-      let activity = new Object
-      let id = this.newActivity.id
-        activity = this.newActivity
-        this.activities[id] = activity
-        console.log(this.activities)
+    createActivity(newActivity) {
+      console.log(newActivity)
     }
-  }
+  }  
 }
 </script>
 
