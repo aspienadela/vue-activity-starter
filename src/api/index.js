@@ -29,7 +29,9 @@ export const createNewActivityAPI = newActivity => {
 	newActivity.createdAt = new Date()
 	newActivity.updatedAt = new Date()
 
-	return newActivity
+	return new Promise((resolve, reject) => {
+		resolve(newActivity)
+	})
 }
 
 export const CategoriesAPI = () => {

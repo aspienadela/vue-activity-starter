@@ -52,6 +52,7 @@
 </template>
 
 <script>
+import Vue from 'vue'
 import ActivityItem from './components/ActivityItem'
 import ActivityCreate from './components/ActivityCreate'
 import { ActivitiesAPI, UserAPI, CategoriesAPI } from './api'
@@ -87,7 +88,7 @@ export default {
   },
   methods: {
     createActivity(newActivity) {
-      console.log(newActivity)
+      Vue.set(this.activities, newActivity.id, newActivity)
     }
   }  
 }

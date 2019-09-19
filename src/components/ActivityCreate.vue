@@ -39,10 +39,12 @@
               <div class="select">
                 <select v-model="newActivity.categories">
                   <option value="">Please Selet One</option>
-                   <option v-for="category in categories" 
+                   <option 
+                      v-for="category in categories"
                       :value="category.id"
                       :key="category.id"
-                      >{{ category.text }}</option>
+                      >{{ category.text }}
+                    </option>
                 </select>
               </div>
           </div>
@@ -76,37 +78,39 @@
 <script>
 import { createNewActivityAPI } from '../api'
 export default {
-    props: {
-      categories: {
-        type: Object,
-        required: true
-      }
-    },
-    data() {
-      return {
-        isFormDisplayed: false,
-        newActivity: {
+  props: {
+    categories: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      isFormDisplayed: false,
+      newActivity: {
         id: Math.random().toString(10).substring(8),
-          title: '',
-          notes: '',
-          categories: ''
-        }
+        title: '',
+        notes: '',
+        categories: ''
       }
+    }
+  },
+  computed: {
+    isFormValid () {
+      return this.newActivity.title && this.newActivity.notes && this.newActivity.categories
+    }
+  },
+  methods: {
+    toggleFormDisplay () {
+      this.isFormDisplayed = !this.isFormDisplayed
     },
-    computed: {
-      isFormValid () {
-        return this.newActivity.title && this.newActivity.notes && this.newActivity.categories
-      }
-    },
-    methods: {
-      toggleFormDisplay () {
-        this.isFormDisplayed = !this.isFormDisplayed
-      },
-      createActivity(){
-        const activity = createNewActivityAPI(this.newActivity)
-        this.$emit('activityCreated', {...activity});
-      }
-    }   
+    createActivity(){
+      createNewActivityAPI(this.newActivity).then(newActivity=>{
+        this.$emit('activityCreated', {...newActivity})
+      })
+      
+    }
+  }   
 }
 
 </script>
