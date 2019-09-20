@@ -7,26 +7,7 @@
         </div>
       </div>
     </nav>
-    <nav class="navbar is-white">
-      <div class="container">
-        <div class="navbar-menu">
-          <div class="navbar-start">
-            <a
-              class="navbar-item is-active"
-              href="#"
-            >Newest</a>
-            <a
-              class="navbar-item"
-              href="#"
-            >In Progress</a>
-            <a
-              class="navbar-item"
-              href="#"
-            >Finished</a>
-          </div>
-        </div>
-      </div>
-    </nav>
+    <TheNavbar />
     <section class="container">
       <div class="columns">
         <div class="column is-3">
@@ -36,14 +17,26 @@
           />
         </div>
         <div class="column is-9">
-          <div class="box content">
-            <ActivityItem
-              v-for="activity in activities"
-              :key="activity.id"
-              :activity="activity"
-            />
-            <div class="activity-length">Currently have {{ activityCount }} activities</div>
-            <div class="activity-motivation">Activity motivation</div>
+          <div class="box content" 
+            :class="{fetching: isFetching, 'has-error': error}">
+            <div v-if="error">
+              {{error}}
+            </div>
+            <div v-else>
+                <div v-if="isFetching">
+                  Loading...
+                </div>
+                <ActivityItem
+                  v-for="activity in activities"
+                  :key="activity.id"
+                  :activity="activity"
+                  :categories="categories"
+                />
+            </div>
+            <div v-if="!isFetching">
+              <div class="activity-length">Currently have {{ activityCount }} activities</div>
+              <div class="activity-motivation">Activity motivation</div>
+            </div>
           </div>
         </div>
       </div>
@@ -55,16 +48,18 @@
 import Vue from 'vue'
 import ActivityItem from './components/ActivityItem'
 import ActivityCreate from './components/ActivityCreate'
+import TheNavbar from './components/TheNavbar'
 import { ActivitiesAPI, UserAPI, CategoriesAPI } from './api'
 export default {
   components: {
-    ActivityItem, ActivityCreate
+    ActivityItem, ActivityCreate, TheNavbar
   },
   data() {
     return {
       creator: 'Pjay Nadela',
       appName: 'Activity Planner', 
-      items: {1: {name: 'Pjay'}, 2: {name: 'Nadela'}},
+      siFetching: false,
+      error: null,
       user: {
         name: 'Pjay Nadela',
         id: '-Aj34jknvncx98812',
@@ -82,12 +77,21 @@ export default {
     }
   },  
   created() {
-    this.activities = ActivitiesAPI()
-    this.categories = CategoriesAPI()
+    this.isFetching = true
+    ActivitiesAPI().then(activitiesList => {
+      this.activities = activitiesList
+      this.isFetching = false
+    })
+    .catch(err=> {
+      this.err = err
+      this.isFetching = false
+    })    
     this.user = UserAPI()
+    this.categories = CategoriesAPI()
   },
   methods: {
     createActivity(newActivity) {
+      console.log(newActivity)      
       Vue.set(this.activities, newActivity.id, newActivity)
     }
   }  
@@ -174,5 +178,11 @@ article.post:last-child {
 .navbar-brand > h1 {
   font-size: 31px;
   padding: 20px;
+}
+.fetching {
+  border: 2px solid orange;
+}
+.has-error {
+  border: 2px solid red;
 }
 </style>

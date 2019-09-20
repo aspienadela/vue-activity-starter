@@ -97,18 +97,27 @@ export default {
   },
   computed: {
     isFormValid () {
-      return this.newActivity.title && this.newActivity.notes && this.newActivity.categories
+      return this.newActivity.title 
+        && this.newActivity.notes 
+        && this.newActivity.categories
     }
   },
   methods: {
     toggleFormDisplay () {
       this.isFormDisplayed = !this.isFormDisplayed
+    },    
+    resetActivity(){
+      this.newActivity.id = Math.random().toString(10).substring(8),
+      this.newActivity.title= '',
+      this.newActivity.notes= '',
+      this.newActivity.categories= ''
+      this.isFormDisplayed = ''
     },
     createActivity(){
-      createNewActivityAPI(this.newActivity).then(newActivity=>{
+      createNewActivityAPI({...this.newActivity}).then(newActivity=>{
+        this.resetActivity()
         this.$emit('activityCreated', {...newActivity})
       })
-      
     }
   }   
 }
